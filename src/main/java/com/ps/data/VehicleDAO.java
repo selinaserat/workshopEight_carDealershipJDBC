@@ -73,7 +73,7 @@ public class VehicleDAO {
 
     public void create(Vehicle vehicle){
         String query = "INSERT INTO " +
-                "vehicles(vin, year, make, model, vehicleType, color, odometer, price, sold) " +
+                "vehicles(vin, vehicle_year, make, model, vehicle_type, color, odometer, price, sold) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
         try(
@@ -105,7 +105,7 @@ public class VehicleDAO {
 
     public void update(String vin, Vehicle vehicle){
         String query = "UPDATE vehicles " +
-                "SET year = ?, make = ?, model = ?, vehicleType = ?, color = ?, odometer = ?, price = ?, sold = ?" +
+                "SET vehicle_year = ?, make = ?, model = ?, vehicle_type = ?, color = ?, odometer = ?, price = ?, sold = ?" +
                 "WHERE vin = ?;";
 
         try(
@@ -160,6 +160,24 @@ public class VehicleDAO {
 
     }
 
+    public void markAsSold(String vin) {
+        String query = "UPDATE vehicles SET sold = 'YES' WHERE vin = ?;";
+        try (
+                Connection connection = dataSource.getConnection();
+                PreparedStatement preparedStatement = connection.prepareStatement(query)
+        ) {
+            preparedStatement.setString(1, vin);
+            int rows = preparedStatement.executeUpdate();
+
+            if (rows == 1) {
+                System.out.println("Vehicle successfully marked as sold.");
+            } else {
+                System.out.println("Failed to mark vehicle as sold.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     private Vehicle vehicleParser(ResultSet resultSet) throws SQLException{
